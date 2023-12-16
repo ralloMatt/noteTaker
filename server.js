@@ -49,6 +49,25 @@ app.post('/api/notes', (req, res) => { // post method for when user saves notes
     return res.json(noteData); // return the response
 });
 
+app.delete('/api/notes/:id', (req, res) => { // request to delete data
+
+    const id = req.params.id; // get parameter
+
+    fs.readFile('./db/db.json', 'utf8', function (err, data) { // read file
+        var notes = JSON.parse(data); // parse the data and get array of objects
+
+        for(let i = 0; i < notes.length; i++){ // loop through arary
+            if(notes[i].id == id){ // if ids match
+                notes.splice(i, 1); // then delete that data
+            }
+        }
+        // write to file again
+        fs.writeFile('./db/db.json', JSON.stringify(notes, null, 4), (err) => err ? console.error(err) : console.log('Data has been written to db file.')); 
+    });
+
+    return res.json(noteData); // return the response
+});
+
 app.listen(PORT, () => {
 console.log(`Example app listening at http://localhost:${PORT}`);
 });
