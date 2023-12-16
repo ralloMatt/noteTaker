@@ -1,6 +1,7 @@
 const express = require('express'); // require exress js
 const path = require('path'); // get path
 const noteData = require('./db/db.json'); // access to database 
+const uuid = require('uuid'); // used to create universally unique identifiers 
 
 const fs = require('fs'); // use file system to read from files
 
@@ -34,6 +35,7 @@ app.post('/api/notes', (req, res) => { // post method for when user saves notes
     const newNote = { // save as new object (or note)
         title,
         text,
+        id: uuid.v4(),
     };
     
     fs.readFile('./db/db.json', 'utf8', function (err, data) { // read from file
