@@ -5,7 +5,7 @@ const uuid = require('uuid'); // used to create universally unique identifiers
 
 const fs = require('fs'); // use file system to read from files
 
-const PORT = 3001; // my port
+const PORT =  process.env.PORT || 3001; // my ports (either heroku or localhost)
 
 const app = express();
 
