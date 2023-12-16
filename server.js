@@ -9,6 +9,8 @@ const PORT = 3001; // my port
 const app = express();
 
 app.use(express.static('public'));
+app.use(express.json()) // for parsing 
+app.use(express.urlencoded({ extended: true })) 
 
 app.get('/', (req, res) => { // create route to landing page
     res.sendFile(path.join(__dirname, './publice/index.html'));
@@ -18,9 +20,32 @@ app.get('/notes', (req, res) => // create route to notes page
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-app.get('/api/notes', (req, res) => res.json(noteData)); // route to the json file
+app.get('/api/notes', (req, res) => { // used for api get request
+    fs.readFile('./db/db.json', 'utf8', function (err, data) { // read from file
+        var notes = JSON.parse(data); // parse the data
+        res.json(JSON.parse(data)); // send it as the response
+    });
+}); // route to the json file
 
+app.post('/api/notes', (req, res) => { // post method for when user saves notes
 
+    const { title, text } = req.body; // destructure request
+
+    const newNote = { // save as new object (or note)
+        title,
+        text,
+    };
+    
+    fs.readFile('./db/db.json', 'utf8', function (err, data) { // read from file
+
+       var notes = JSON.parse(data); // parse the file
+       notes.push(newNote); // push the new not to the notes
+       // Next line of code I wrote to the file
+       fs.writeFile('./db/db.json', JSON.stringify(notes, null, 4), (err) => err ? console.error(err) : console.log('Data has been written to db file.')); 
+    })
+    
+    return res.json(noteData); // return the response
+});
 
 app.listen(PORT, () => {
 console.log(`Example app listening at http://localhost:${PORT}`);
